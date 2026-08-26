@@ -52,11 +52,33 @@ to the feed.
 | `gallery` | Every image from the posts as a grid, each linking back to its post. |
 | `calendar` | Calendar events published by the account ([NIP-52](https://github.com/nostr-protocol/nips/blob/master/52.md)), upcoming first, past ones dimmed. |
 | `articles` | Long-form articles published by the account ([NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md)), rendered from Markdown. |
-| `mentions` | Posts by other people that tag this account, newest first. |
+| `mentions` | Posts by other people that tag this account, newest first — filtered by web of trust. |
 | `about` | Profile details, Nostr address, Lightning address and public key. |
 
 Turning `calendar`, `articles` or `mentions` off also stops the site asking relays
 for that data at all.
+
+### Web of trust
+
+Anyone can tag your account in a post, so an unfiltered mentions page fills up with
+spam. This one only shows posts from **accounts you follow**, read from your own
+follow list (Nostr [kind 3](https://github.com/nostr-protocol/nips/blob/master/02.md))
+on the relays. Nothing to configure — follow and unfollow in any Nostr client and the
+page follows suit.
+
+A tag alone is not treated as a mention either: replies carry a tag for everyone in
+the thread whether or not they say anything about them, so the post must actually
+name your account in its text.
+
+Two things worth knowing:
+
+- It is your follow list only, not the people *they* follow, so a mention from a
+  stranger never appears however well connected they are.
+- Until your follow list arrives from a relay the filter is skipped rather than
+  applied to nothing, so a slow relay cannot empty the page. On a first visit
+  unfiltered mentions may show for a moment before the list lands and trims them.
+  Your follow list is cached in the browser and kept there ahead of everything
+  else, so return visits filter straight away.
 
 Every listing is paginated — the feed, the posts under a topic, the gallery and the
 events — and page numbers live in the address (`#/page/2`, `#/tag/bitcoin/2`,
